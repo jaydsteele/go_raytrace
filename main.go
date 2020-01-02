@@ -2,26 +2,33 @@ package main
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/jaydsteele/go_raytrace/geom"
 )
 
-func color(r geom.Ray) geom.Vec3 {
-	if hitSphere(geom.V3(0, 0, -1), 0.5, r) {
-		return geom.V3(1, 0, 0)
-	}
-	unitDirection := r.Direction.Unit()
-	t := 0.5 * (unitDirection.Y + 1.0)
-	return geom.V3Unit.Mul(1 - t).Add(geom.V3(0.5, 0.7, 1.0).Mul(t))
-}
-
-func hitSphere(center geom.Vec3, radius float64, r geom.Ray) bool {
+func hitSphere(center geom.Vec3, radius float64, r geom.Ray) float64 {
 	oc := r.Origin.Sub(center)
 	a := r.Direction.Dot(r.Direction)
 	b := 2.0 * oc.Dot(r.Direction)
 	c := oc.Dot(oc) - radius*radius
 	discriminant := b*b - 4*a*c
-	return discriminant > 0
+	if discriminant < 0 {
+		return -1
+	} else {
+		return (-b - math.Sqrt(discriminant)) / (2 * a)
+	}
+}
+
+func color(r geom.Ray) geom.Vec3 {
+	t := hitSphere(geom.V3(0, 0, -1), 0.5, r)
+	if t > 0 {
+		N := r.PointAtParameter(t).Sub(geom.V3(0, 0, -1)).Unit()
+		return geom.V3(N.X+1, N.Y+1, N.Z+1).Mul(0.5)
+	}
+	unitDirection := r.Direction.Unit()
+	t = 0.5 * (unitDirection.Y + 1.0)
+	return geom.V3Unit.Mul(1 - t).Add(geom.V3(0.5, 0.7, 1.0).Mul(t))
 }
 
 func main() {
