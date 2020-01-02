@@ -11,7 +11,7 @@ import (
 
 func color(r geom.Ray, world scene.Hitable) geom.Vec3 {
 	rec := scene.HitRecord{}
-	if world.Hit(r, 0.0, math.MaxFloat64, &rec) {
+	if world.Hit(r, 0.001, math.MaxFloat64, &rec) {
 		target := rec.P.Add(rec.Normal).Add(geom.RandomInUnitSphere())
 		newRay := geom.Ray{
 			Origin:    rec.P,
