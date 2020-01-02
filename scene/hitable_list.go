@@ -1,4 +1,6 @@
-package geom
+package scene
+
+import "github.com/jaydsteele/go_raytrace/geom"
 
 // HitableList is a list of Hitable objects
 type HitableList struct {
@@ -14,7 +16,7 @@ func (list *HitableList) Add(h Hitable) {
 }
 
 // Hit an item in the HitableList
-func (list *HitableList) Hit(r Ray, tMin, tMax float64, rec *HitRecord) bool {
+func (list *HitableList) Hit(r geom.Ray, tMin, tMax float64, rec *HitRecord) bool {
 	tempRecord := HitRecord{}
 	hitAnything := false
 	closestSoFar := tMax

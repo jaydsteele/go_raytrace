@@ -1,15 +1,19 @@
-package geom
+package scene
 
-import "math"
+import (
+	"math"
+
+	"github.com/jaydsteele/go_raytrace/geom"
+)
 
 // Sphere has a center and radius
 type Sphere struct {
-	Center Vec3
+	Center geom.Vec3
 	Radius float64
 }
 
 // Hit calculates whether this object has been hit by the Ray
-func (s Sphere) Hit(r Ray, tMin, tMax float64, rec *HitRecord) bool {
+func (s Sphere) Hit(r geom.Ray, tMin, tMax float64, rec *HitRecord) bool {
 	oc := r.Origin.Sub(s.Center)
 	a := r.Direction.Dot(r.Direction)
 	b := oc.Dot(r.Direction)

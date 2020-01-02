@@ -5,10 +5,11 @@ import (
 	"math"
 
 	"github.com/jaydsteele/go_raytrace/geom"
+	"github.com/jaydsteele/go_raytrace/scene"
 )
 
-func color(r geom.Ray, world geom.Hitable) geom.Vec3 {
-	rec := geom.HitRecord{}
+func color(r geom.Ray, world scene.Hitable) geom.Vec3 {
+	rec := scene.HitRecord{}
 	if world.Hit(r, 0.0, math.MaxFloat64, &rec) {
 		return rec.Normal.Add(geom.V3Unit).Mul(0.5)
 	}
@@ -18,17 +19,17 @@ func color(r geom.Ray, world geom.Hitable) geom.Vec3 {
 }
 
 func main() {
-	nx := 200
-	ny := 100
+	nx := 400
+	ny := 200
 	fmt.Printf("P3\n%d %d\n255\n", nx, ny)
 	lowerLeftCorner := geom.Vec3{X: -2.0, Y: -1.0, Z: -1.0}
 	horizontal := geom.Vec3{X: 4.0, Y: 0.0, Z: 0.0}
 	vertical := geom.Vec3{X: 0.0, Y: 2.0, Z: 0.0}
 	origin := geom.V3Zero
 
-	world := geom.HitableList{}
-	world.Add(geom.Sphere{Center: geom.V3(0, 0, -1), Radius: 0.5})
-	world.Add(geom.Sphere{Center: geom.V3(0, -100.5, -1), Radius: 100})
+	world := scene.HitableList{}
+	world.Add(scene.Sphere{Center: geom.V3(0, 0, -1), Radius: 0.5})
+	world.Add(scene.Sphere{Center: geom.V3(0, -100.5, -1), Radius: 100})
 
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
