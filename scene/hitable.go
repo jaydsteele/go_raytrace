@@ -4,8 +4,8 @@ import "github.com/jaydsteele/go_raytrace/geom"
 
 // HitRecord contains the information for a ray hit
 type HitRecord struct {
-	t      float64
-	p      geom.Vec3
+	T      float64
+	P      geom.Vec3
 	Normal geom.Vec3
 }
 

@@ -12,7 +12,12 @@ import (
 func color(r geom.Ray, world scene.Hitable) geom.Vec3 {
 	rec := scene.HitRecord{}
 	if world.Hit(r, 0.0, math.MaxFloat64, &rec) {
-		return rec.Normal.Add(geom.V3Unit).Mul(0.5)
+		target := rec.P.Add(rec.Normal).Add(geom.RandomInUnitSphere())
+		newRay := geom.Ray{
+			Origin:    rec.P,
+			Direction: target.Sub(rec.P),
+		}
+		return color(newRay, world).Mul(0.5)
 	}
 	unitDirection := r.Direction.Unit()
 	t := 0.5 * (unitDirection.Y + 1.0)
@@ -20,8 +25,8 @@ func color(r geom.Ray, world scene.Hitable) geom.Vec3 {
 }
 
 func main() {
-	nx := 400
-	ny := 200
+	nx := 200
+	ny := 100
 	numSamples := 100
 	fmt.Printf("P3\n%d %d\n255\n", nx, ny)
 
@@ -44,6 +49,10 @@ func main() {
 				col = col.Add(color(r, &world))
 			}
 			col = col.Div(float64(numSamples))
+			// gamma correction
+			col.X = math.Sqrt(col.X)
+			col.Y = math.Sqrt(col.Y)
+			col.Z = math.Sqrt(col.Z)
 			ir := int32(255.99 * col.R())
 			ig := int32(255.99 * col.G())
 			ib := int32(255.99 * col.B())

@@ -22,16 +22,16 @@ func (s Sphere) Hit(r geom.Ray, tMin, tMax float64, rec *HitRecord) bool {
 	if discriminant > 0 {
 		temp := (-b - math.Sqrt(b*b-a*c)) / a
 		if temp < tMax && temp > tMin {
-			rec.t = temp
-			rec.p = r.PointAtParameter(rec.t)
-			rec.Normal = rec.p.Sub(s.Center).Div(s.Radius)
+			rec.T = temp
+			rec.P = r.PointAtParameter(rec.T)
+			rec.Normal = rec.P.Sub(s.Center).Div(s.Radius)
 			return true
 		}
 		temp = (-b + math.Sqrt(b*b-a*c)) / a
 		if temp < tMax && temp > tMin {
-			rec.t = temp
-			rec.p = r.PointAtParameter(rec.t)
-			rec.Normal = rec.p.Sub(s.Center).Div(s.Radius)
+			rec.T = temp
+			rec.P = r.PointAtParameter(rec.T)
+			rec.Normal = rec.P.Sub(s.Center).Div(s.Radius)
 			return true
 		}
 	}
