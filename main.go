@@ -7,9 +7,21 @@ import (
 )
 
 func color(r geom.Ray) geom.Vec3 {
+	if hitSphere(geom.V3(0, 0, -1), 0.5, r) {
+		return geom.V3(1, 0, 0)
+	}
 	unitDirection := r.Direction.Unit()
 	t := 0.5 * (unitDirection.Y + 1.0)
 	return geom.V3Unit.Mul(1 - t).Add(geom.V3(0.5, 0.7, 1.0).Mul(t))
+}
+
+func hitSphere(center geom.Vec3, radius float64, r geom.Ray) bool {
+	oc := r.Origin.Sub(center)
+	a := r.Direction.Dot(r.Direction)
+	b := 2.0 * oc.Dot(r.Direction)
+	c := oc.Dot(oc) - radius*radius
+	discriminant := b*b - 4*a*c
+	return discriminant > 0
 }
 
 func main() {
