@@ -1,6 +1,8 @@
 package geom
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestVec3_R(t *testing.T) {
 	type fields struct {

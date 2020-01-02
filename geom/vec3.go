@@ -1,13 +1,30 @@
 package geom
 
 import (
-	"errors"
 	"math"
 )
 
 // Vec3 is a generic 3-tuple representation
 type Vec3 struct {
 	X, Y, Z float64
+}
+
+var (
+	// V3Zero is the zero vector (0,0,0)
+	V3Zero = Vec3{0, 0, 0}
+	// V3Unit is the unit vector (1,1,1)
+	V3Unit = Vec3{1, 1, 1}
+	// V3UnitX is the x-axis unit vector (1,0,0)
+	V3UnitX = Vec3{1, 0, 0}
+	// V3UnitY is the y-axis unit vector (0,1,0)
+	V3UnitY = Vec3{0, 1, 0}
+	// V3UnitZ is the z-axis unit vector (0,0,1)
+	V3UnitZ = Vec3{0, 0, 1}
+)
+
+// V3 is shorthand for Vec3{X: x, Y: y, Z: z}
+func V3(x, y, z float64) Vec3 {
+	return Vec3{x, y, z}
 }
 
 // R returns the first coordinate of the Vec3, a convenience when working with colors
@@ -30,80 +47,93 @@ func (v *Vec3) Negate(a *Vec3, b *Vec3) Vec3 {
 	return Vec3{-a.X, -a.Y, -b.Z}
 }
 
-// ElementAt returns the tuple value at the specified index
-func (v *Vec3) ElementAt(index int) (float64, error) {
-	if index == 0 {
-		return v.X, nil
-	}
-	if index == 1 {
-		return v.Y, nil
-	}
-	if index == 2 {
-		return v.Z, nil
-	}
-	return 0, errors.New("Index must be >=0, <=2")
+// Add returns the vector v+w.
+func (v Vec3) Add(w Vec3) Vec3 {
+	return Vec3{v.X + w.X, v.Y + w.Y, v.Z + w.Z}
 }
 
-// Add the specified Vec3 to this Vec3
-func (v *Vec3) Add(w *Vec3) {
-	v.X += w.X
-	v.Y += w.Y
-	v.Z += w.Z
+// Sub returns the vector v-w.
+func (v Vec3) Sub(w Vec3) Vec3 {
+	return Vec3{v.X - w.X, v.Y - w.Y, v.Z - w.Z}
 }
 
-// Subtract the specified Vec3 from this Vec3
-func (v *Vec3) Subtract(w *Vec3) {
-	v.X -= w.X
-	v.Y -= w.Y
-	v.Z -= w.Z
+// Mul returns the vector v*s.
+func (v Vec3) Mul(s float64) Vec3 {
+	return Vec3{v.X * s, v.Y * s, v.Z * s}
 }
 
-// Multiply the specified Vec3 to this Vec3
-func (v *Vec3) Multiply(w *Vec3) {
-	v.X *= w.X
-	v.Y *= w.Y
-	v.Z *= w.Z
+// Div returns the vector v/s.
+func (v Vec3) Div(s float64) Vec3 {
+	return Vec3{v.X / s, v.Y / s, v.Z / s}
 }
 
-// Divide the specified Vec3 from this Vec3
-func (v *Vec3) Divide(w *Vec3) {
-	v.X /= w.X
-	v.Y /= w.Y
-	v.Z /= w.Z
+// Neg returns the negated vector of v.
+func (v Vec3) Neg() Vec3 {
+	return v.Mul(-1)
 }
 
-// Scale this Vec3 by the specified value
-func (v *Vec3) Scale(s float64) {
-	v.X *= s
-	v.Y *= s
-	v.Z *= s
+// Dot returns the dot (a.k.a. scalar) product of v and w.
+func (v Vec3) Dot(w Vec3) float64 {
+	return v.X*w.X + v.Y*w.Y + v.Z*w.Z
 }
 
-// Length of this Vec3
-func (v *Vec3) Length() float64 {
-	return math.Sqrt(v.LengthSquared())
-}
-
-// LengthSquared of this Vec3
-func (v *Vec3) LengthSquared() float64 {
-	return Dot(v, v)
-}
-
-// MakeUnitVector converts this Vec3 into a unit Vector
-func (v *Vec3) MakeUnitVector() {
-	v.Scale(1.0 / v.Length())
-}
-
-// Dot product
-func Dot(a, b *Vec3) float64 {
-	return a.X*b.X + a.Y*b.Y + a.Z + b.Z
-}
-
-// Cross product
-func Cross(v1, v2 *Vec3) Vec3 {
+// Cross returns the cross product of v and w.
+func (v Vec3) Cross(w Vec3) Vec3 {
 	return Vec3{
-		v1.Y*v2.Z - v1.Z*v2.Y,
-		-(v1.X*v2.Z - v1.Z*v2.X),
-		v1.X*v2.Y - v1.Y*v2.X,
+		v.Y*w.Z - v.Z*w.Y,
+		v.Z*w.X - v.X*w.Z,
+		v.X*w.Y - v.Y*w.X,
 	}
+}
+
+// CompMul returns the component-wise multiplication of two vectors.
+func (v Vec3) CompMul(w Vec3) Vec3 {
+	return Vec3{v.X * w.X, v.Y * w.Y, v.Z * w.Z}
+}
+
+// CompDiv returns the component-wise division of two vectors.
+func (v Vec3) CompDiv(w Vec3) Vec3 {
+	return Vec3{v.X / w.X, v.Y / w.Y, v.Z / w.Z}
+}
+
+// SqDist returns the square of the euclidian distance between two vectors.
+func (v Vec3) SqDist(w Vec3) float64 {
+	return v.Sub(w).SqLen()
+}
+
+// Dist returns the euclidian distance between two vectors.
+func (v Vec3) Dist(w Vec3) float64 {
+	return v.Sub(w).Len()
+}
+
+// SqLen returns the square of the length (euclidian norm) of a vector.
+func (v Vec3) SqLen() float64 {
+	return v.Dot(v)
+}
+
+// Len returns the length (euclidian norm) of a vector.
+func (v Vec3) Len() float64 {
+	return float64(math.Sqrt(float64(v.SqLen())))
+}
+
+// Norm returns the normalized vector of a vector.
+func (v Vec3) Norm() Vec3 {
+	return v.Div(v.Len())
+}
+
+// Reflect returns the reflection vector of v given a normal n.
+func (v Vec3) Reflect(n Vec3) Vec3 {
+	return v.Sub(n.Mul(2 * v.Dot(n)))
+}
+
+// Lerp returns the linear interpolation between v and w by amount t.
+// The amount t is usually a value between 0 and 1. If t=0 v will be
+// returned; if t=1 w will be returned.
+func (v Vec3) Lerp(w Vec3, t float64) Vec3 {
+	return Vec3{lerp(v.X, w.X, t), lerp(v.Y, w.Y, t), lerp(v.Z, w.Z, t)}
+}
+
+// Unit returns the unit vector of the Vec3
+func (v Vec3) Unit() Vec3 {
+	return v.Div(v.Len())
 }
