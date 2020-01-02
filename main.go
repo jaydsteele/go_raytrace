@@ -15,9 +15,8 @@ func hitSphere(center geom.Vec3, radius float64, r geom.Ray) float64 {
 	discriminant := b*b - 4*a*c
 	if discriminant < 0 {
 		return -1
-	} else {
-		return (-b - math.Sqrt(discriminant)) / (2 * a)
 	}
+	return (-b - math.Sqrt(discriminant)) / (2 * a)
 }
 
 func color(r geom.Ray) geom.Vec3 {
