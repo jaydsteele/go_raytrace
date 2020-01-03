@@ -2,6 +2,7 @@ package scene
 
 import "github.com/jaydsteele/go_raytrace/geom"
 
+// Camera defines a Camera in the scene
 type Camera struct {
 	Origin          geom.Vec3
 	LowerLeftCorner geom.Vec3
@@ -9,6 +10,7 @@ type Camera struct {
 	Vertical        geom.Vec3
 }
 
+// MakeCamera makes a Camera object with default values
 func MakeCamera() Camera {
 	return Camera{
 		LowerLeftCorner: geom.V3(-2, -1, -1),
@@ -18,6 +20,7 @@ func MakeCamera() Camera {
 	}
 }
 
+// GetRay provides a Ray extending from the Camera at the specified (u,v)-coordinate in the view
 func (c *Camera) GetRay(u, v float64) geom.Ray {
 	return geom.Ray{
 		Origin:    c.Origin,

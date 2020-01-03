@@ -8,8 +8,9 @@ import (
 
 // Sphere has a center and radius
 type Sphere struct {
-	Center geom.Vec3
-	Radius float64
+	Center   geom.Vec3
+	Radius   float64
+	Material Material
 }
 
 // Hit calculates whether this object has been hit by the Ray
@@ -20,6 +21,7 @@ func (s Sphere) Hit(r geom.Ray, tMin, tMax float64, rec *HitRecord) bool {
 	c := oc.Dot(oc) - s.Radius*s.Radius
 	discriminant := b*b - a*c
 	if discriminant > 0 {
+		rec.Material = s.Material
 		temp := (-b - math.Sqrt(b*b-a*c)) / a
 		if temp < tMax && temp > tMin {
 			rec.T = temp

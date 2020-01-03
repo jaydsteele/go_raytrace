@@ -24,9 +24,7 @@ func (list *HitableList) Hit(r geom.Ray, tMin, tMax float64, rec *HitRecord) boo
 		if list.items[i].Hit(r, tMin, closestSoFar, &tempRecord) {
 			hitAnything = true
 			closestSoFar = tempRecord.T
-			rec.Normal = tempRecord.Normal
-			rec.P = tempRecord.P
-			rec.T = tempRecord.T
+			*rec = tempRecord
 		}
 	}
 	return hitAnything

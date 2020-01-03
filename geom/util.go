@@ -23,3 +23,8 @@ func RandomInUnitSphere() Vec3 {
 	}
 	return result
 }
+
+// Reflect a vector according to the specified normal
+func Reflect(v, n Vec3) Vec3 {
+	return v.Sub(n.Mul(2 * v.Dot(n)))
+}

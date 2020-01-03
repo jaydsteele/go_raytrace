@@ -1,12 +1,15 @@
 package scene
 
-import "github.com/jaydsteele/go_raytrace/geom"
+import (
+	"github.com/jaydsteele/go_raytrace/geom"
+)
 
 // HitRecord contains the information for a ray hit
 type HitRecord struct {
-	T      float64
-	P      geom.Vec3
-	Normal geom.Vec3
+	T        float64
+	P        geom.Vec3
+	Normal   geom.Vec3
+	Material Material
 }
 
 // Hitable defines the method for any hitable object in the scene
