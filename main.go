@@ -50,6 +50,7 @@ func main() {
 		Radius: 0.5,
 		Material: &scene.MetalMaterial{
 			Albedo: geom.V3(0.8, 0.6, 0.2),
+			Fuzz:   0.3,
 		},
 	})
 	world.Add(scene.Sphere{
@@ -57,6 +58,7 @@ func main() {
 		Radius: 0.5,
 		Material: &scene.MetalMaterial{
 			Albedo: geom.V3(0.8, 0.8, 0.8),
+			Fuzz:   1.0,
 		},
 	})
 
