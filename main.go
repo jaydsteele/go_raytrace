@@ -25,8 +25,8 @@ func color(r geom.Ray, world scene.Hitable, depth int) geom.Vec3 {
 }
 
 func main() {
-	nx := 200
-	ny := 100
+	nx := 400
+	ny := 200
 	numSamples := 50
 	fmt.Printf("P3\n%d %d\n255\n", nx, ny)
 
@@ -54,12 +54,14 @@ func main() {
 		},
 	})
 	world.Add(scene.Sphere{
-		Center: geom.V3(-1, 0, -1),
-		Radius: 0.5,
-		Material: &scene.MetalMaterial{
-			Albedo: geom.V3(0.8, 0.8, 0.8),
-			Fuzz:   1.0,
-		},
+		Center:   geom.V3(-1, 0, -1),
+		Radius:   0.5,
+		Material: &scene.DialectricMaterial{RefIdx: 1.5},
+	})
+	world.Add(scene.Sphere{
+		Center:   geom.V3(-1, 0, -1),
+		Radius:   -0.45,
+		Material: &scene.DialectricMaterial{RefIdx: 1.5},
 	})
 
 	cam := scene.MakeCamera()
