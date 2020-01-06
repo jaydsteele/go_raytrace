@@ -24,52 +24,90 @@ func color(r geom.Ray, world scene.Hitable, depth int) geom.Vec3 {
 	return geom.V3Unit.Mul(1 - t).Add(geom.V3(0.5, 0.7, 1.0).Mul(t))
 }
 
+func randomScene() scene.Hitable {
+	world := scene.HitableList{}
+	world.Add(scene.Sphere{
+		Center: geom.V3(0, -1000, 0),
+		Radius: 1000,
+		Material: &scene.LambertianMaterial{
+			Albedo: geom.V3(.5, .5, .5),
+		},
+	})
+
+	for a := -11; a < 11; a++ {
+		for b := -11; b < 11; b++ {
+			center := geom.V3(float64(a)+0.9*rand.Float64(), 0.2, float64(b)+0.9*rand.Float64())
+			if center.Sub(geom.V3(4, .2, 0)).Len() > .9 {
+				chooseMat := rand.Float64()
+				if chooseMat < .8 { // diffuse
+					world.Add(scene.Sphere{
+						Center: center,
+						Radius: .2,
+						Material: &scene.LambertianMaterial{
+							Albedo: geom.V3(
+								rand.Float64()*rand.Float64(),
+								rand.Float64()*rand.Float64(),
+								rand.Float64()*rand.Float64()),
+						},
+					})
+				} else if chooseMat < .95 { // metal
+					world.Add(scene.Sphere{
+						Center: center,
+						Radius: .2,
+						Material: &scene.MetalMaterial{
+							Albedo: geom.V3(
+								0.5*(1+rand.Float64()),
+								0.5*(1+rand.Float64()),
+								0.5*(1+rand.Float64())),
+							Fuzz: 0.5 * rand.Float64(),
+						},
+					})
+				} else {
+					world.Add(scene.Sphere{
+						Center:   center,
+						Radius:   .2,
+						Material: &scene.DialectricMaterial{RefIdx: 1.5},
+					})
+				}
+			}
+		}
+	}
+
+	world.Add(scene.Sphere{
+		Center:   geom.V3(0, 1, 0),
+		Radius:   1,
+		Material: &scene.DialectricMaterial{RefIdx: 1.5},
+	})
+	world.Add(scene.Sphere{
+		Center: geom.V3(-4, 1, 0),
+		Radius: .2,
+		Material: &scene.LambertianMaterial{
+			Albedo: geom.V3(0.4, 0.2, 0.1),
+		},
+	})
+	world.Add(scene.Sphere{
+		Center: geom.V3(4, 1, 0),
+		Radius: 1,
+		Material: &scene.MetalMaterial{
+			Albedo: geom.V3(0.7, 0.6, 0.5),
+		},
+	})
+
+	return &world
+}
+
 func main() {
 	nx := 400
 	ny := 200
 	numSamples := 50
 	fmt.Printf("P3\n%d %d\n255\n", nx, ny)
 
-	world := scene.HitableList{}
+	world := randomScene()
 
-	world.Add(scene.Sphere{
-		Center: geom.V3(0, 0, -1),
-		Radius: 0.5,
-		Material: &scene.LambertianMaterial{
-			Albedo: geom.V3(0.3, 0.3, 0.8),
-		},
-	})
-	world.Add(scene.Sphere{
-		Center: geom.V3(0, -100.5, -1),
-		Radius: 100,
-		Material: &scene.LambertianMaterial{
-			Albedo: geom.V3(0.8, 0.8, 0),
-		},
-	})
-	world.Add(scene.Sphere{
-		Center: geom.V3(1, 0, -1),
-		Radius: 0.5,
-		Material: &scene.MetalMaterial{
-			Albedo: geom.V3(0.8, 0.6, 0.2),
-			Fuzz:   0.3,
-		},
-	})
-	world.Add(scene.Sphere{
-		Center:   geom.V3(-1, 0, -1),
-		Radius:   0.5,
-		Material: &scene.DialectricMaterial{RefIdx: 1.5},
-	})
-	world.Add(scene.Sphere{
-		Center:   geom.V3(-1, 0, -1),
-		Radius:   -0.45,
-		Material: &scene.DialectricMaterial{RefIdx: 1.5},
-	})
-
-	lookFrom := geom.V3(3, 3, 2)
-	lookAt := geom.V3(0, 0, -1)
-	distToFocus := lookFrom.Sub(lookAt).Len()
-	aperture := 2.0
-	fmt.Print("About to make cam")
+	lookFrom := geom.V3(13, 2, 3)
+	lookAt := geom.V3(0, 0, 0)
+	distToFocus := 10.0
+	aperture := 0.1
 	cam := scene.MakeCamera(lookFrom, lookAt, geom.V3(0, 1, 0), 20, float64(nx)/float64(ny), aperture, distToFocus)
 
 	for j := ny - 1; j >= 0; j-- {
@@ -79,8 +117,7 @@ func main() {
 				u := (float64(i) + rand.Float64()) / float64(nx)
 				v := (float64(j) + rand.Float64()) / float64(ny)
 				r := cam.GetRay(u, v)
-				// p := r.PointAtParameter(2)
-				col = col.Add(color(r, &world, 0))
+				col = col.Add(color(r, world, 0))
 			}
 			col = col.Div(float64(numSamples))
 			// gamma correction
