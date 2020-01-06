@@ -31,11 +31,12 @@ func main() {
 	fmt.Printf("P3\n%d %d\n255\n", nx, ny)
 
 	world := scene.HitableList{}
+
 	world.Add(scene.Sphere{
 		Center: geom.V3(0, 0, -1),
 		Radius: 0.5,
 		Material: &scene.LambertianMaterial{
-			Albedo: geom.V3(0.8, 0.3, 0.3),
+			Albedo: geom.V3(0.3, 0.3, 0.8),
 		},
 	})
 	world.Add(scene.Sphere{
@@ -64,7 +65,7 @@ func main() {
 		Material: &scene.DialectricMaterial{RefIdx: 1.5},
 	})
 
-	cam := scene.MakeCamera()
+	cam := scene.MakeCamera(geom.V3(-2, 2, 1), geom.V3(0, 0, -1), geom.V3(0, 1, 0), 30, float64(nx)/float64(ny))
 
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {

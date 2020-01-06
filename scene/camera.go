@@ -1,6 +1,10 @@
 package scene
 
-import "github.com/jaydsteele/go_raytrace/geom"
+import (
+	"math"
+
+	"github.com/jaydsteele/go_raytrace/geom"
+)
 
 // Camera defines a Camera in the scene
 type Camera struct {
@@ -11,12 +15,18 @@ type Camera struct {
 }
 
 // MakeCamera makes a Camera object with default values
-func MakeCamera() Camera {
+func MakeCamera(lookFrom, lookAt, vup geom.Vec3, vfov, aspect float64) Camera {
+	theta := vfov * math.Pi / 180
+	halfHeight := math.Tan(theta / 2)
+	halfWidth := aspect * halfHeight
+	w := lookFrom.Sub(lookAt).Unit()
+	u := vup.Cross(w).Unit()
+	v := w.Cross(u)
 	return Camera{
-		LowerLeftCorner: geom.V3(-2, -1, -1),
-		Horizontal:      geom.V3(4, 0, 0),
-		Vertical:        geom.V3(0, 2, 0),
-		Origin:          geom.V3Zero,
+		LowerLeftCorner: lookFrom.Sub(u.Mul(halfWidth)).Sub(v.Mul(halfHeight)).Sub(w),
+		Horizontal:      u.Mul(2 * halfWidth),
+		Vertical:        v.Mul(2 * halfHeight),
+		Origin:          lookFrom,
 	}
 }
 
