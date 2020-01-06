@@ -27,6 +27,18 @@ func RandomInUnitSphere() Vec3 {
 	return result
 }
 
+// RandomInUnitDisk returns a random point in a unit disk centered at the origin
+func RandomInUnitDisk() Vec3 {
+	p := Vec3{}
+	for true {
+		p = V3(2*rand.Float64()-1, 2*rand.Float64()-1, 0)
+		if p.SqLen() < 1 {
+			break
+		}
+	}
+	return p
+}
+
 // Reflect a vector according to the specified normal
 func Reflect(v, n Vec3) Vec3 {
 	return v.Sub(n.Mul(2 * v.Dot(n)))

@@ -65,7 +65,12 @@ func main() {
 		Material: &scene.DialectricMaterial{RefIdx: 1.5},
 	})
 
-	cam := scene.MakeCamera(geom.V3(-2, 2, 1), geom.V3(0, 0, -1), geom.V3(0, 1, 0), 30, float64(nx)/float64(ny))
+	lookFrom := geom.V3(3, 3, 2)
+	lookAt := geom.V3(0, 0, -1)
+	distToFocus := lookFrom.Sub(lookAt).Len()
+	aperture := 2.0
+	fmt.Print("About to make cam")
+	cam := scene.MakeCamera(lookFrom, lookAt, geom.V3(0, 1, 0), 20, float64(nx)/float64(ny), aperture, distToFocus)
 
 	for j := ny - 1; j >= 0; j-- {
 		for i := 0; i < nx; i++ {
